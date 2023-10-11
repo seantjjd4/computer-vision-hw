@@ -103,35 +103,35 @@ def binarization(img, threshold=128):
 
     return result_img
 
+if __name__ == "__main__":
+    g_taipei101_img = rgbToGray(taipei101_img)
+    g_plane_img = rgbToGray(plane_img)
 
-g_taipei101_img = rgbToGray(taipei101_img)
-g_plane_img = rgbToGray(plane_img)
+    cv2.imwrite('./result_img/taipei101_Q1.png', g_taipei101_img)
+    cv2.imwrite('./result_img/aeroplane_Q1.png', g_plane_img)
 
-cv2.imwrite('./result_img/taipei101_Q1.png', g_taipei101_img)
-cv2.imwrite('./result_img/aeroplane_Q1.png', g_plane_img)
+    kernel = np.array([[-1, -1, -1],
+                        [-1, 8, -1],
+                        [-1, -1, -1]])
 
-kernel = np.array([[-1, -1, -1],
-                    [-1, 8, -1],
-                    [-1, -1, -1]])
+    g_edge_taipei101_img = convolution(g_taipei101_img, kernel, stride=1)
+    g_edge_plane_img = convolution(g_plane_img, kernel, stride=1)
 
-g_edge_taipei101_img = convolution(g_taipei101_img, kernel, stride=1)
-g_edge_plane_img = convolution(g_plane_img, kernel, stride=1)
+    cv2.imwrite('./result_img/taipei101_Q2.png', g_edge_taipei101_img)
+    cv2.imwrite('./result_img/aeroplane_Q2.png', g_edge_plane_img)
 
-cv2.imwrite('./result_img/taipei101_Q2.png', g_edge_taipei101_img)
-cv2.imwrite('./result_img/aeroplane_Q2.png', g_edge_plane_img)
+    pooling_size = (2,2)
 
-pooling_size = (2,2)
+    g_pool_taipei101_img = maxPooling(g_taipei101_img, pooling_size, stride=2)
+    g_pool_plane_img = maxPooling(g_plane_img, pooling_size, stride=2)
 
-g_pool_taipei101_img = maxPooling(g_taipei101_img, pooling_size, stride=2)
-g_pool_plane_img = maxPooling(g_plane_img, pooling_size, stride=2)
+    cv2.imwrite('./result_img/taipei101_Q3.png', g_pool_taipei101_img)
+    cv2.imwrite('./result_img/aeroplane_Q3.png', g_pool_plane_img)
 
-cv2.imwrite('./result_img/taipei101_Q3.png', g_pool_taipei101_img)
-cv2.imwrite('./result_img/aeroplane_Q3.png', g_pool_plane_img)
+    threshold = 128
 
-threshold = 128
+    g_binary_taipei101_img = binarization(g_taipei101_img, threshold)
+    g_binary_plane_img = binarization(g_plane_img, threshold)
 
-g_binary_taipei101_img = binarization(g_taipei101_img, threshold)
-g_binary_plane_img = binarization(g_plane_img, threshold)
-
-cv2.imwrite('./result_img/taipei101_Q4.png', g_binary_taipei101_img)
-cv2.imwrite('./result_img/aeroplane_Q4.png', g_binary_plane_img)
+    cv2.imwrite('./result_img/taipei101_Q4.png', g_binary_taipei101_img)
+    cv2.imwrite('./result_img/aeroplane_Q4.png', g_binary_plane_img)
