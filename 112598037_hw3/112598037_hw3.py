@@ -89,7 +89,7 @@ def nonMaximumSuppression(magnitude, angle):
                 q = 255
                 r = 255
                 
-               #angle 0
+                #angle 0
                 if (0 <= angle[i,j] < 22.5) or (157.5 <= angle[i,j] <= 180):
                     q = magnitude[i, j+1]
                     r = magnitude[i, j-1]
@@ -116,7 +116,7 @@ def nonMaximumSuppression(magnitude, angle):
 
     return result
 
-def doubleThreshold(img, low=30, high=80):
+def doubleThreshold(img, low=10, high=25):
     strong = 255
     weak = 50
     height, width = img.shape
