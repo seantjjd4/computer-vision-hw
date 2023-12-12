@@ -149,6 +149,44 @@ def edgeTrackingByHysteresis(img, weak=50, strong=255):
     return result
 
 
+def houghTransform(edges, origin_img, threshold = 100):
+    theta_res = 1  # 角度分辨率
+    rho_res = 1  # 距離分辨率
+
+    theta_vals = np.deg2rad(np.arange(-90, 90, theta_res))
+    width, height = edges.shape
+    diag_len = int(np.ceil(np.sqrt(width * width + height * height)))  # 對角線長度
+    rho_vals = np.arange(-diag_len, diag_len, rho_res)
+
+    # 建立 Hough 空間
+    hough_space = np.zeros((len(rho_vals), len(theta_vals)), dtype=np.uint64)
+
+    # 對每個邊緣點進行 Hough Transform
+    edge_points = np.argwhere(edges != 0)
+    for y, x in edge_points:
+        for t_idx, theta in enumerate(theta_vals):
+            rho = int(x * np.cos(theta) + y * np.sin(theta))
+            rho_idx = np.argmin(np.abs(rho_vals - rho))
+            hough_space[rho_idx, t_idx] += 1
+
+    # 設定閾值
+    rho_idxs, theta_idxs = np.where(hough_space > threshold)
+
+    # 繪製檢測到的直線
+    for rho_idx, theta_idx in zip(rho_idxs, theta_idxs):
+        rho = rho_vals[rho_idx]
+        theta = theta_vals[theta_idx]
+        a = np.cos(theta)
+        b = np.sin(theta)
+        x0 = a * rho
+        y0 = b * rho
+        x1 = int(x0 + 1000 * (-b))
+        y1 = int(y0 + 1000 * (a))
+        x2 = int(x0 - 1000 * (-b))
+        y2 = int(y0 - 1000 * (a))
+        cv2.line(origin_img, (x1, y1), (x2, y2), (0, 0, 255), 2)
+
+    return origin_img
 
 
     
@@ -177,3 +215,11 @@ if __name__ == "__main__":
     cv2.imwrite('./result_img/img2_q2.png', c_img2)
     cv2.imwrite('./result_img/img3_q2.png', c_img3)
 
+
+    h_img1 = houghTransform(c_img1, img1, 120)
+    h_img2 = houghTransform(c_img2, img2, 120)
+    h_img3 = houghTransform(c_img3, img3, 120)
+
+    cv2.imwrite('./result_img/img1_q3.png', h_img1)
+    cv2.imwrite('./result_img/img2_q3.png', h_img2)
+    cv2.imwrite('./result_img/img3_q3.png', h_img3)
